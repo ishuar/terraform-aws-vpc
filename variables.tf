@@ -105,7 +105,7 @@ variable "use_created_igw_for_public_routing" {
 ##  Subnets
 ######################
 
-variable "public_subnet" {
+variable "public_subnets" {
   type = list(object({
     name                                           = optional(string)
     cidr_block                                     = optional(string)
@@ -124,7 +124,7 @@ variable "public_subnet" {
   default     = []
 }
 
-variable "private_subnet" {
+variable "private_subnets" {
   type = list(object({
     name                                           = optional(string)
     cidr_block                                     = optional(string)
@@ -151,7 +151,7 @@ variable "create_private_route_table" {
   default     = false
 }
 
-variable "private_routes" {
+variable "private_subnet_routes" {
   type = map(object({
     destination_cidr_block     = optional(string, null)
     destination_prefix_list_id = optional(string, null)
@@ -169,7 +169,6 @@ variable "private_routes" {
 One of the following target arguments must be supplied:
   - carrier_gateway_id - Identifier of a carrier gateway. This attribute can only be used when the VPC contains a subnet which is associated with a Wavelength Zone.
   - egress_only_gateway_id - Identifier of a VPC Egress Only Internet Gateway.
-  - gateway_id - Identifier of a VPC internet gateway or a virtual private gateway. Specify local when updating a previously imported local route.
   - nat_gateway_id - Identifier of a VPC NAT gateway.
   - network_interface_id - Identifier of an EC2 network interface.
   - transit_gateway_id - Identifier of an EC2 Transit Gateway.
@@ -179,21 +178,52 @@ EOF
   default     = {}
 }
 
-variable "public_routes" {
+variable "public_subnet_routes" {
   type = map(object({
-    name                       = optional(string, null)
     destination_cidr_block     = optional(string, null)
     destination_prefix_list_id = optional(string, null)
-    egress_only_gateway_id     = optional(string, null)
-    gateway_id                 = optional(string, null)
+    transit_gateway_id         = optional(string, null)
+    vpc_endpoint_id            = optional(string, null)
+    carrier_gateway_id         = optional(string, null)
+    network_interface_id       = optional(string, null)
+    vpc_peering_connection_id  = optional(string, null)
   }))
-
   description = <<-EOF
 (optional) Public route rules block.
 "One of the destination_cidr_block or destination_prefix_list_id argument must be supplied:"
 One of the following target arguments must be supplied:
-  - egress_only_gateway_id - Identifier of a VPC Egress Only Internet Gateway.
-  - gateway_id - Identifier of a VPC internet gateway or a virtual private gateway. Specify local when updating a previously imported local route.
+  - carrier_gateway_id - Identifier of a carrier gateway. This attribute can only be used when the VPC contains a subnet which is associated with a Wavelength Zone.
+  - network_interface_id - Identifier of an EC2 network interface.
+  - transit_gateway_id - Identifier of an EC2 Transit Gateway.
+  - vpc_endpoint_id - Identifier of a VPC Endpoint.
+  - vpc_peering_connection_id - Identifier of a VPC peering connection.
 EOF
+  default     = {}
+}
+
+#######################
+##  Instance Connect Endpoint
+######################
+
+variable "enable_instance_connect_endpoint" {
+  type        = bool
+  description = "(optional) Whether to enable instance connect endpoint or not?"
+  default     = false
+}
+
+variable "preserve_client_ip" {
+  type        = string
+  description = "(Optional) Indicates whether your client's IP address is preserved as the source."
+  default     = true
+}
+
+variable "security_group_ids" {
+  type        = list(string)
+  description = "(Optional) One or more security groups to associate with the endpoint. If you don't specify a security group, the default security group for the VPC will be associated with the endpoint."
+  default     = null
+}
+variable "instance_connect_endpoint_tags" {
+  type        = map(string)
+  description = "(Optional) Map of tags to assign to this ec2 instance connect endpoint resource"
   default     = {}
 }

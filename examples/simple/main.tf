@@ -6,7 +6,7 @@ module "simple_vpc" {
   cidr_block = "10.1.0.0/16"
 
   ## Subnets
-  public_subnet = [
+  public_subnets = [
     {
       name              = "subnet01"
       cidr_block        = "10.1.1.0/24"
@@ -18,7 +18,7 @@ module "simple_vpc" {
     # }
   ]
 
-  private_subnet = [
+  private_subnets = [
     {
       name              = "subnet01"
       cidr_block        = "10.1.2.0/24"
