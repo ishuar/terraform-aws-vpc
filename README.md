@@ -65,7 +65,7 @@ module "simple_vpc" {
     {
       name              = "subnet01"
       cidr_block        = "10.1.1.0/24"
-      availability_zone = "eu-central-1"
+      availability_zone = "eu-central-1a"
     },
     # {
     #   name              = "subnet02"
