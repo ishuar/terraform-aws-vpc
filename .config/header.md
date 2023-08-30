@@ -54,27 +54,28 @@ managed within the footer file
 module "simple_vpc" {
 
   source  = "ishuar/vpc/aws"
-  version = "~> 1.0"
+  version = "~> 2.0"
 
-  prefix                  = "simple"
-  env                     = "dev"
-  region                  = eu-central-1
-  cidr_block              = "10.1.0.0/16"
+  prefix     = "simple"
+  env        = "dev"
+  region     = "eu-central-1"
+  cidr_block = "10.1.0.0/16"
 
   ## Subnets
-  public_subnet = [
+  public_subnets = [
     {
       name              = "subnet01"
       cidr_block        = "10.1.1.0/24"
-      availability_zone = "eu-central-1a"
+      availability_zone = "eu-central-1"
     },
     # {
     #   name              = "subnet02"
     #   cidr_block        = "10.1.3.0/24"
+    #   availability_zone = "eu-central-1b"
     # }
   ]
 
-  private_subnet = [
+  private_subnets = [
     {
       name              = "subnet01"
       cidr_block        = "10.1.2.0/24"
@@ -83,6 +84,7 @@ module "simple_vpc" {
     # {
     #   name              = "subnet02"
     #   cidr_block        = "10.1.4.0/24"
+    #   availability_zone = "eu-central-1b"
     # }
   ]
 }
@@ -94,5 +96,6 @@ module "simple_vpc" {
 Examples are availabe in `examples` directory.
 
 - [simple](/example/simple)
+- [bootstrap-routing](/example/bootstrap-routing)
 
 ## Submodule

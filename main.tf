@@ -21,7 +21,7 @@ resource "aws_vpc" "this" {
 
 # ref: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/subnet
 resource "aws_subnet" "public_subnet" {
-  for_each                                       = { for subnet in var.public_subnet : subnet.name => subnet }
+  for_each                                       = { for subnet in var.public_subnets : subnet.name => subnet }
   vpc_id                                         = aws_vpc.this.id
   cidr_block                                     = each.value.cidr_block
   availability_zone                              = each.value.availability_zone
@@ -42,7 +42,7 @@ resource "aws_subnet" "public_subnet" {
 }
 
 resource "aws_subnet" "private_subnet" {
-  for_each                                       = { for subnet in var.private_subnet : subnet.name => subnet }
+  for_each                                       = { for subnet in var.private_subnets : subnet.name => subnet }
   vpc_id                                         = aws_vpc.this.id
   cidr_block                                     = each.value.cidr_block
   availability_zone                              = each.value.availability_zone
@@ -63,11 +63,30 @@ resource "aws_subnet" "private_subnet" {
 
 # ref: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/internet_gateway
 resource "aws_internet_gateway" "this" {
-  count = length(var.public_subnet) > 0 ? 1 : 0
+  count = length(var.public_subnets) > 0 ? 1 : 0
 
   vpc_id = aws_vpc.this.id
   tags = merge(var.tags,
     {
-      Name = "${var.prefix}-${var.env}-igw--${var.region}"
+      Name = "${var.prefix}-${var.env}-igw-${var.region}"
   })
+}
+
+locals {
+  first_private_subnet_id = values({ for k, v in aws_subnet.private_subnet : k => v.id })[0]
+}
+
+# ref: https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/ec2_instance_connect_endpoint
+resource "aws_ec2_instance_connect_endpoint" "this" {
+  count = length(var.private_subnets) > 0 && var.enable_instance_connect_endpoint ? 1 : 0
+
+  subnet_id          = local.first_private_subnet_id
+  preserve_client_ip = var.preserve_client_ip
+  security_group_ids = var.security_group_ids
+  tags = merge(var.tags,
+    {
+      Name = "${var.prefix}-${var.env}-instance-connect-vpc-endpoint-${var.region}"
+    }, var.instance_connect_endpoint_tags
+  )
+  depends_on = [aws_subnet.private_subnet]
 }
