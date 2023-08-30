@@ -29,11 +29,11 @@ output "igw_id" {
 }
 
 output "private_route_table_id" {
-  value = module.bootstrap_routing_vpc.private_route_table_id
+  value       = module.bootstrap_routing_vpc.private_route_table_id
   description = "Private Route Table ID"
 }
 
 output "public_route_table_id" {
-  value = module.bootstrap_routing_vpc.public_route_table_id
+  value       = module.bootstrap_routing_vpc.public_route_table_id
   description = "Public Route Table ID"
 }
