@@ -9,7 +9,6 @@ For a comprehensive view of all the options available and more advanced configur
 ## Usage
 
 To run this example you need to execute:
-
 ```bash
 $ terraform init
 $ terraform plan
