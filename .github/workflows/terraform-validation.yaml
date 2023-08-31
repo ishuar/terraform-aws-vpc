@@ -28,7 +28,6 @@ jobs:
     permissions:
       id-token: write
       contents: read
-
     strategy:
       matrix:
         ##* Update the list to update examples test.
@@ -73,6 +72,9 @@ jobs:
     name: TF Apply
     runs-on: ubuntu-latest
     needs: tfplan
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       matrix:
         ##* Update the list to update examples test
@@ -118,6 +120,9 @@ jobs:
     name: TF Destroy
     runs-on: ubuntu-latest
     needs: [tfplan, tfapply]
+    permissions:
+      id-token: write
+      contents: read
     strategy:
       matrix:
         ##* Update the list to update examples test
