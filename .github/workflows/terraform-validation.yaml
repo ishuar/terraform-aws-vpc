@@ -1,0 +1,51 @@
+name: Validation with Terraform
+on:
+  workflow_call:
+    inputs:
+      terraform-version:
+        type: string
+        required: false
+        default: 1.5.4
+        description: The Terraform Version Used for the Github action.
+
+  pull_request:
+
+env:
+  TF_IN_AUTOMATION: true
+  TF_INPUT: false
+
+jobs:
+  terraform-plan:
+    name: Terraform Plan for all examples
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+    strategy:
+      matrix:
+        examples: ["simple", "bootstrap-routing"]
+    steps:
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          mask-aws-account-id: true
+          unset-current-credentials: true
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ inputs.terraform-version }}
+
+      - name: Terraform init and plan
+        shell: bash
+        id: plan
+        working-directory: "${{ github.workspace }}/examples/${{ matrix.examples }}"
+        run: |
+          terraform init
+          terraform validate
+          terraform plan -detailed-exitcode
