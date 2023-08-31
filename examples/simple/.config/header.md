@@ -15,6 +15,8 @@ $ terraform plan
 $ terraform apply
 ```
 
+>>**INFO:** :warning: Please comment or update the backend.tf configuration accordingly in your local set up :warning:
+
 ## Destroying Resources
 
 To destroy the resources created by this Terraform configuration, run the following command.
