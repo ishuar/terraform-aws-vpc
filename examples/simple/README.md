@@ -15,7 +15,7 @@ $ terraform plan
 $ terraform apply
 ```
 
->>**INFO:** :warning: Please comment or update the backend.tf configuration accordingly in your local set up :waning:
+>>**INFO:** :warning: Please comment or update the backend.tf configuration accordingly in your local set up :warning:
 
 ## Destroying Resources
 
