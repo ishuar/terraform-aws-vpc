@@ -8,7 +8,7 @@ resource "aws_nat_gateway" "public" {
 
 module "bootstrap_routing_vpc" {
   source     = "../../"
-  prefix     = "simple"
+  prefix     = "bootstrap"
   env        = "dev"
   region     = var.region
   cidr_block = "10.1.0.0/16"
