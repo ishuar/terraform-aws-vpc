@@ -7,6 +7,7 @@ on:
         required: false
         default: 1.5.4
         description: The Terraform Version Used for the Github action.
+
       only-destroy:
         type: boolean
         required: false
@@ -20,19 +21,21 @@ env:
   TF_INPUT: false
 
 jobs:
-  tf-plan:
-    if: ! inputs.only-destroy
+  tfplan:
+    if: !inputs.only-destroy
     name: TF Plan
     runs-on: ubuntu-latest
     permissions:
       id-token: write
       contents: read
+
     strategy:
       matrix:
         ##* Update the list to update examples test.
         examples: ["simple", "bootstrap-routing"]
     outputs:
       exitCode: ${{ steps.plan.outputs.exitcode }}
+
     steps:
       - name: checkout
         uses: actions/checkout@v3
@@ -65,11 +68,11 @@ jobs:
           name: "${{ matrix.examples }}.tfplan"
           path: "${{ github.workspace }}/examples/${{ matrix.examples }}/${{ matrix.examples }}.tfplan"
 
-  tf-apply:
+  tfapply:
     if: ( !cancelled() && !failure() && needs.tf-plan.outputs.exitCode == 2 && ! inputs.only-destroy )
     name: TF Apply
     runs-on: ubuntu-latest
-    needs: tf-plan
+    needs: tfplan
     strategy:
       matrix:
         ##* Update the list to update examples test
@@ -102,11 +105,11 @@ jobs:
 
           echo "ExitCode=$EXIT_CODE" >> $GITHUB_OUTPUT
 
-  tf-destroy:
+  tfdestroy:
     if: ( !cancelled() && !failure() && needs.tf-apply.outputs.exitCode == 0 ) || inputs.only-destroy
     name: TF Destroy
     runs-on: ubuntu-latest
-    needs: tf-plan
+    needs: [tfplan, tfapply]
     strategy:
       matrix:
         ##* Update the list to update examples test
