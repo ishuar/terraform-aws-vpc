@@ -37,10 +37,21 @@ jobs:
       exitCode: ${{ steps.plan.outputs.exitcode }}
 
     steps:
-      - name: Checkout, Authorize and Set up Terraform
-        uses: ./.github/workflows/template-terraform.yaml
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          terraform-version: ${{ inputs.terraform-version }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          mask-aws-account-id: true
+          unset-current-credentials: true
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ inputs.terraform-version }}
 
       - name: Terraform init and plan
         shell: bash
@@ -70,10 +81,21 @@ jobs:
     outputs:
       exitCode: ${{ steps.apply.outputs.ExitCode }}
     steps:
-      - name: Checkout, Authorize and Set up Terraform
-        uses: ./.github/workflows/template-terraform.yaml
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          terraform-version: ${{ inputs.terraform-version }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          mask-aws-account-id: true
+          unset-current-credentials: true
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ inputs.terraform-version }}
 
       - uses: actions/download-artifact@v3
         with:
@@ -101,10 +123,21 @@ jobs:
         ##* Update the list to update examples test
         examples: ["simple", "bootstrap-routing"]
     steps:
-      - name: Checkout, Authorize and Set up Terraform
-        uses: ./.github/workflows/template-terraform.yaml
+      - name: checkout
+        uses: actions/checkout@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
         with:
-          terraform-version: ${{ inputs.terraform-version }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          mask-aws-account-id: true
+          unset-current-credentials: true
+
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: ${{ inputs.terraform-version }}
 
       - name: "Terraform Destroy"
         shell: bash
