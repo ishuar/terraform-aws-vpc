@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
   pull_request:
 
+concurrency:
+  group: terratest
+
 jobs:
   terratest:
     permissions:
