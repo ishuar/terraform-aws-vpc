@@ -11,8 +11,9 @@ provider "aws" {
   region = var.region
   default_tags {
     tags = {
-      github_repo = "terraform-aws-eks"
+      github_repo = "terraform-aws-vpc"
       example     = "bootstrap-routing"
+      Name        = "ishuar/aws-vpc"
     }
   }
 }

@@ -1,15 +1,9 @@
 resource "aws_eip" "this" {
   domain = "vpc"
-  tags = {
-    Name = "bootstrap-testing"
-  }
 }
 resource "aws_nat_gateway" "public" {
   allocation_id = aws_eip.this.id
   subnet_id     = module.bootstrap_routing_vpc.public_subnet_ids["subnet01"]
-  tags = {
-    Name = "bootstrap-testing"
-  }
 }
 
 module "bootstrap_routing_vpc" {
