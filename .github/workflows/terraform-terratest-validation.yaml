@@ -1,0 +1,36 @@
+name: Terraform validation with terratest
+
+on:
+  workflow_dispatch:
+  pull_request:
+
+concurrency:
+  group: terratest
+
+jobs:
+  terratest:
+    permissions:
+      ## required for configure aws credentials
+      id-token: write
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v3
+        with:
+          aws-region: ${{ vars.AWS_REGION }}
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          mask-aws-account-id: true
+          unset-current-credentials: true
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21.x'
+          cache: false
+
+      - name: Testing all examples
+        run: go test -v -timeout=30m
+        working-directory: "${{ github.workspace }}/tests"
